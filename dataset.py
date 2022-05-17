@@ -40,11 +40,9 @@ class BaseDataset(torch.utils.data.Dataset):
         )
 
         self.classes = ['background',
-                        'cloud_shadow',
-                        'double_plant',
-                        'planter_skip',
-                        'standing_water',
-                        'waterway',
+                        'drydown',
+                        'nutrient_deficiency',
+                        'water',
                         'weed_cluster']
 
         self.img_down_size = lambda img: imresize(

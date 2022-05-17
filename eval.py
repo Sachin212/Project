@@ -102,11 +102,11 @@ def main():
                         ibn_mode=cfg.MODEL.ibn_mode,
                         freeze_bn=False)
     elif cfg.MODEL.arch == 'smp-deeplab':
-        model = smp.DeepLabV3(encoder_name='resnet101', classes=7)
+        model = smp.DeepLabV3(encoder_name='resnet101', classes=4)
     elif cfg.MODEL.arch == 'FPN':
-        model = smp.FPN(encoder_name='resnet101',classes=7)
+        model = smp.FPN(encoder_name='resnet101',classes=4)
     elif cfg.MODEL.arch == 'Unet':
-        model = smp.Unet(encoder_name='resnet101',classes=7)
+        model = smp.Unet(encoder_name='resnet101',classes=4)
 
     if cfg.DATASET.val_channels[0] == 'rgbn':
         convert_model(model, 4)
@@ -231,8 +231,8 @@ def save_result(info, pred, label, mask):
     classes = pred.argmax(dim=1, keepdim=True)
     label = label.argmax(dim=1, keepdim=True)
 
-    classes[~mask.unsqueeze(1).expand_as(classes).bool()] = 7
-    label[~mask.unsqueeze(1).expand_as(label).bool()] = 7
+    classes[~mask.unsqueeze(1).expand_as(classes).bool()] = 5
+    label[~mask.unsqueeze(1).expand_as(label).bool()] = 5
 
     # classes = colorEncode(classes)
     # label = colorEncode(label)

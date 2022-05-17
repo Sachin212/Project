@@ -104,15 +104,15 @@ def main():
                         num_low_level_feat=cfg.MODEL.num_low_level_feat,
                         interpolate_before_lastconv=cfg.MODEL.interpolate_before_lastconv)
     elif cfg.MODEL.arch == 'smp-deeplab':
-        model = smp.DeepLabV3(encoder_name='resnet101', classes=7)
+        model = smp.DeepLabV3(encoder_name='resnet101', classes=5)
     elif cfg.MODEL.arch == 'FPN':
-        model = smp.FPN(encoder_name='resnet101',classes=7)
+        model = smp.FPN(encoder_name='resnet101',classes=5)
     elif cfg.MODEL.arch == 'Unet':
-        model = smp.Unet(encoder_name='resnet101',classes=7)
+        model = smp.Unet(encoder_name='resnet101',classes=5)
     elif cfg.MODEL.arch == 'Dinknet':
         if cfg.MODEL.backbone == 'resnet34':
             assert cfg.MODEL.ibn_mode == 'none'
-            model = DinkNet34(num_classes=7)
+            model = DinkNet34(num_classes=5)
             # weight = torch.load('pretrained/dinknet34.pth')
             # weight['finalconv3.weight'] = torch.Tensor(model.finalconv3.weight)
             # weight['finalconv3.bias'] = torch.Tensor(model.finalconv3.bias)
@@ -120,9 +120,9 @@ def main():
             # # weight.pop('finalconv3.bias')
             # model.load_state_dict(weight)
         elif cfg.MODEL.backbone == 'resnet50':
-            model = DinkNet50(num_classes=7, ibn_mode=cfg.MODEL.ibn_mode)
+            model = DinkNet50(num_classes=5, ibn_mode=cfg.MODEL.ibn_mode)
         elif cfg.MODEL.backbone == 'resnet101':
-            model = DinkNet101(num_classes=7, ibn_mode=cfg.MODEL.ibn_mode)
+            model = DinkNet101(num_classes=5, ibn_mode=cfg.MODEL.ibn_mode)
 
     if cfg.DATASET.train_channels in ['rgbn', 'rgbr']:
         convert_model(model, 4)
