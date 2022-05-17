@@ -35,22 +35,3 @@
 ```
 python test.py --cfg config/agri-test.yaml
 ```
-
-## Bibtex
-
-```
-@InProceedings{Yang_2020_CVPR_Workshops,
-author = {Yang, Siwei and Yu, Shaozuo and Zhao, Bingchen and Wang, Yin},
-title = {Reducing the Feature Divergence of RGB and Near-Infrared Images Using Switchable Normalization},
-booktitle = {The IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
-month = {June},
-year = {2020}
-}
-```
-
-## Contribution 
-
-- Bingchen Zhao proposed the idea of measuring feature divergence between modalities which motivated this research and designed some of the experiments.
-- Siwei Yang wrote most of the code and ran part of the experiments to validate the idea.
-- Shaozuo Yu shared part of coding and assisted Siwei Yang with some experiments.
-- Yin Wang supervises this reseach and provide the resources used by this research.
