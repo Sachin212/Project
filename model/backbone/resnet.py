@@ -261,9 +261,11 @@ def ResNet101(output_stride, ibn_mode='none', pretrained=True):
         if ibn_mode == 'none':
             _load_pretrained_model(model, url='https://download.pytorch.org/models/resnet101-5d3b4d8f.pth')
         elif ibn_mode == 'a' or ibn_mode == 'ab' or ibn_mode == 's':
-            _load_pretrained_model(model, path='pretrained/resnet101_ibn_a.pth')
+            _load_pretrained_model(model, url='https://download.pytorch.org/models/resnet101-5d3b4d8f.pth')
+#             _load_pretrained_model(model, path='pretrained/resnet101_ibn_a.pth')
         elif ibn_mode == 'b':
-            _load_pretrained_model(model, path='pretrained/resnet101_ibn_b.pth')
+            _load_pretrained_model(model, url='https://download.pytorch.org/models/resnet101-5d3b4d8f.pth')
+#             _load_pretrained_model(model, path='pretrained/resnet101_ibn_b.pth')
         else:
             raise NotImplementedError
 
@@ -271,7 +273,7 @@ def ResNet101(output_stride, ibn_mode='none', pretrained=True):
 
 if __name__ == "__main__":
     import torch
-    model = ResNet101(output_stride=8, pretrained=True)
+    model = ResNet101(output_stride=8, ibn_mode='none', pretrained=True)
     input = torch.rand(1, 3, 512, 512)
     output, low_level_feat = model(input)
     print(output.size())
