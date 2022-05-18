@@ -4,7 +4,7 @@ DATASET:
   list_val: "./data/agri-val.odgt"
   # list_train: ["./data/agri-debug.odgt"]
   # list_val: "./data/agri-debug.odgt"
-  num_class: 7
+  num_class: 5
   segm_downsampling_rate: 1.0
   shift_limit: (-1.0, 1.0)
   scale_limit: (-1.0, 1.0)
