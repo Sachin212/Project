@@ -70,7 +70,7 @@ _C.LOSS.focal = 0.0
 _C.TRAIN = CN()
 _C.TRAIN.batch_size_per_gpu = 2
 # epochs to train for
-# _C.TRAIN.num_epoch = 20
+_C.TRAIN.num_epoch = 20
 _C.TRAIN.iter_warmup = 1000
 _C.TRAIN.iter_static = 7000
 _C.TRAIN.iter_decay = 17000
@@ -92,7 +92,7 @@ _C.TRAIN.deep_sup_scale = 0.4
 # fix bn params, only under finetuning
 _C.TRAIN.fix_bn = False
 # number of data loading workers
-_C.TRAIN.workers = 16
+_C.TRAIN.workers = 2
 
 # frequency to display
 _C.TRAIN.disp_iter = 20

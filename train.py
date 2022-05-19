@@ -4,6 +4,7 @@ import time
 from tqdm import tqdm
 import shutil
 from datetime import datetime
+import gc
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,9 +12,9 @@ import matplotlib.pyplot as plt
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-import apex
+# import apex
 from apex import amp
-from apex.parallel import DistributedDataParallel as DDP
+# from apex.parallel import DistributedDataParallel as DDP
 
 import segmentation_models_pytorch as smp
 from model.dinknet import DinkNet34, DinkNet50, DinkNet101
@@ -127,8 +128,9 @@ def main():
     if cfg.DATASET.train_channels in ['rgbn', 'rgbr']:
         convert_model(model, 4)
 
-    model = apex.parallel.convert_syncbn_model(model)
-    model = model.cuda()
+#     model = apex.parallel.convert_syncbn_model(model)
+#     model = model.cuda()
+    model = model.to(torch.device('cuda'))
 
     loss_fn = ComposedLossWithLogits(dict(cfg.LOSS)).cuda()
 
@@ -283,9 +285,10 @@ def main():
         for loader_val in loader_vals:
             val(i + 1, loader_val, model, loss_fn,
                 history, args, logger)
-
-        if args.local_rank == 0:    
-            checkpoint(model, history, cfg, i + 1, args, logger)
+    gc.collect()
+    if args.local_rank == 0:
+        gc.collect()
+        checkpoint(model, history, cfg, i + 1, args, logger)
 
 
 def init_history(cfg):
