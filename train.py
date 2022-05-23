@@ -9,6 +9,7 @@ import gc
 import numpy as np
 import matplotlib.pyplot as plt
 
+from torch.cuda.amp import autocast, GradScaler
 import torch
 import torch.distributed as dist
 import torch.nn as nn
@@ -158,6 +159,8 @@ def main():
 
         weight = torch.load(cfg.TRAIN.resume_checkpoint,
                             map_location=lambda storage, loc: storage.cuda(args.local_rank))
+#         weight = torch.load(cfg.TRAIN.resume_checkpoint,
+#                             map_location = 'cpu')
         model.load_state_dict(weight)
 
     dataset_train = AgriTrainDataset(
@@ -322,6 +325,9 @@ def adjust_learning_rate(optimizer, cur_iter, cfg):
 
 
 def train(epoch, loader_train, loader_mixup, model, loss_fn, optimizer, history, args, logger):
+    # new Code
+    scaler = GradScaler()
+    
     iter_time = AverageMeter()
     data_time = AverageMeter()
     # ave_total_loss = AverageMeter()
@@ -375,38 +381,46 @@ def train(epoch, loader_train, loader_mixup, model, loss_fn, optimizer, history,
             mixed_img, lam = mixupImg(img, img_, alpha=cfg.TRAIN.mixup_alpha)
 
             data_time.update(time.time() - tic)
+            
+            with autocast():
+                pred = model(mixed_img)
 
-            pred = model(mixed_img)
+                pred_a = pred.clone()
+                pred_a[~mask.unsqueeze(1).expand_as(pred_a).bool()] = -INF_FP16
+                # label_a *= mask_a.unsqueeze(1)
+                sum_loss_a, losses_a = loss_fn(pred_a, label)
 
-            pred_a = pred.clone()
-            pred_a[~mask.unsqueeze(1).expand_as(pred_a).bool()] = -INF_FP16
-            # label_a *= mask_a.unsqueeze(1)
-            sum_loss_a, losses_a = loss_fn(pred_a, label)
+                pred_b = pred.clone()
+                pred_b[~mask_b.unsqueeze(1).expand_as(pred_b).bool()] = -INF_FP16
+                # label_b *= mask_b.unsqueeze(1)
+                sum_loss_b, losses_b = loss_fn(pred_b, label_b)
 
-            pred_b = pred.clone()
-            pred_b[~mask_b.unsqueeze(1).expand_as(pred_b).bool()] = -INF_FP16
-            # label_b *= mask_b.unsqueeze(1)
-            sum_loss_b, losses_b = loss_fn(pred_b, label_b)
-
-            sum_loss = lam * sum_loss_a + (1 - lam) * sum_loss_b
-            losses = lam * losses_a + (1 - lam) * losses_b
+                sum_loss = lam * sum_loss_a + (1 - lam) * sum_loss_b
+                losses = lam * losses_a + (1 - lam) * losses_b
         else:
             # print('No MIXUP')
+            with autocast():
+                data_time.update(time.time() - tic)
 
-            data_time.update(time.time() - tic)
-
-            pred = model(img)
-            # print(type(pred))
-            pred[~mask.unsqueeze(1).expand_as(pred).bool()] = -INF_FP16
-            # import ipdb; ipdb.set_trace()
-            sum_loss, losses = loss_fn(pred, label)
+                pred = model(img)
+                # print(type(pred))
+                pred[~mask.unsqueeze(1).expand_as(pred).bool()] = -INF_FP16
+                # import ipdb; ipdb.set_trace()
+                sum_loss, losses = loss_fn(pred, label)
 
 #         if cfg.MODEL.fp16:
+#             scaler.scale(loss).backward()
+#             with autocast():
+#                 loss
 #             with amp.scale_loss(sum_loss, optimizer) as scaled_loss:
 #                 scaled_loss.backward()
 #         else:
-        sum_loss.backward()
-        optimizer.step()
+#             sum_loss.backward()
+        
+#         optimizer.step()
+        scaler.scale(sum_loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
 
         if args.distributed:
             reduced_sum_loss = reduce_tensor(sum_loss.data, args.world_size).item()
