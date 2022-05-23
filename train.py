@@ -399,8 +399,8 @@ def train(epoch, loader_train, loader_mixup, model, loss_fn, optimizer, history,
                 losses = lam * losses_a + (1 - lam) * losses_b
         else:
             # print('No MIXUP')
+            data_time.update(time.time() - tic)
             with autocast():
-                data_time.update(time.time() - tic)
 
                 pred = model(img)
                 # print(type(pred))
