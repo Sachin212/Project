@@ -13,7 +13,7 @@ import torch
 import torch.distributed as dist
 import torch.nn as nn
 # import apex
-from apex import amp
+# from apex import amp
 # from apex.parallel import DistributedDataParallel as DDP
 
 import segmentation_models_pytorch as smp
@@ -27,7 +27,7 @@ from model.loss import ComposedLossWithLogits
 
 torch.manual_seed(42)
 np.random.seed(42)
-amp.register_float_function(torch, 'sigmoid')
+# amp.register_float_function(torch, 'sigmoid')
 
 INF_FP16 = 2 ** 15
 
@@ -145,8 +145,8 @@ def main():
         optimizer = torch.optim.Adam(model.parameters(),
                                      lr=cfg.TRAIN.lr)
 
-    if cfg.MODEL.fp16:
-        model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
+#     if cfg.MODEL.fp16:
+#         model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
 
     if args.distributed:
         model = DDP(model, delay_allreduce=True)
@@ -401,11 +401,11 @@ def train(epoch, loader_train, loader_mixup, model, loss_fn, optimizer, history,
             # import ipdb; ipdb.set_trace()
             sum_loss, losses = loss_fn(pred, label)
 
-        if cfg.MODEL.fp16:
-            with amp.scale_loss(sum_loss, optimizer) as scaled_loss:
-                scaled_loss.backward()
-        else:
-            sum_loss.backward()
+#         if cfg.MODEL.fp16:
+#             with amp.scale_loss(sum_loss, optimizer) as scaled_loss:
+#                 scaled_loss.backward()
+#         else:
+        sum_loss.backward()
         optimizer.step()
 
         if args.distributed:
