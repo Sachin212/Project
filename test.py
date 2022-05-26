@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-import apex
-from apex import amp
-from apex.parallel import DistributedDataParallel as DDP
+# import apex
+# from apex import amp
+# from apex.parallel import DistributedDataParallel as DDP
 from torchvision.transforms import ToPILImage
 
 import segmentation_models_pytorch as smp
@@ -120,13 +120,21 @@ def main():
     logger.info("Running with config:\n{}".format(cfg))
 
 
+#     if cfg.MODEL.arch == 'deeplab':
+#         model = DeepLab(num_classes=cfg.DATASET.num_class,
+#                         backbone=cfg.MODEL.backbone,                  # resnet101
+#                         output_stride=cfg.MODEL.os,
+#                         ibn_mode=cfg.MODEL.ibn_mode,
+#                         freeze_bn=False,
+#                         num_low_level_feat=cfg.MODEL.num_low_level_feat)
     if cfg.MODEL.arch == 'deeplab':
         model = DeepLab(num_classes=cfg.DATASET.num_class,
                         backbone=cfg.MODEL.backbone,                  # resnet101
                         output_stride=cfg.MODEL.os,
                         ibn_mode=cfg.MODEL.ibn_mode,
                         freeze_bn=False,
-                        num_low_level_feat=cfg.MODEL.num_low_level_feat)
+                        num_low_level_feat=cfg.MODEL.num_low_level_feat,
+                        interpolate_before_lastconv=cfg.MODEL.interpolate_before_lastconv)
     elif cfg.MODEL.arch == 'smp-deeplab':
         model = smp.DeepLabV3(encoder_name='resnet101', classes=7)
     elif cfg.MODEL.arch == 'FPN':
