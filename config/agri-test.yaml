@@ -1,7 +1,7 @@
 DATASET:
   root_dataset: "data/"
   list_test: "./data/agri-test.odgt"
-  num_class: 7
+  num_class: 5
   segm_downsampling_rate: 1.0
 
 MODEL:
@@ -13,7 +13,7 @@ MODEL:
 
 TEST:
   batch_size_per_gpu: 16
-  checkpoint: "pretrained/ibn101a-deeplab-lowfeat@3-aug.pth"
+  checkpoint: "/content/weights/weights_epoch_5.pth"
   result: "./result"
 
 DIR: "ckpt/"

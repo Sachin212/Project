@@ -73,6 +73,14 @@ def parse_args():
         help="path to config file",
         type=str,
     )
+    
+    parser.add_argument(
+        "--weight"
+#         default="/content/weights/" + os.listdir("/content/weights")[0],
+        default="",
+        help="path to weights file",
+        type=str
+    )
 
     args = parser.parse_args()
     return args
@@ -143,27 +151,18 @@ def main():
         model = smp.Unet(encoder_name='resnet101',classes=7)
 
     convert_model(model, 4)
-    from pytorch_model_summary import summary
-    print(summary(model, torch.zeros((1, 4, 512, 512)), show_input=True))
-    return
-    model = apex.parallel.convert_syncbn_model(model)
     model = model.cuda()
-
-    model = amp.initialize(model, opt_level="O1")
 
     if args.distributed:
         model = DDP(model, delay_allreduce=True)
 
-    if cfg.TEST.checkpoint != "":
+    if args.weight != "":
         if args.local_rank == 0:
             logger.info("Loading weight from {}".format(
-                cfg.TEST.checkpoint))
+                args.weight))
 
-        weight = torch.load(cfg.TEST.checkpoint,
+        weight = torch.load(args.weight,
                             map_location=lambda storage, loc: storage.cuda(args.local_rank))
-
-        if not args.distributed:
-            weight = {k[7:]: v for k, v in weight.items()}
 
         model.load_state_dict(weight)
 
