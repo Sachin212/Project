@@ -288,9 +288,6 @@ def main():
         for loader_val in loader_vals:
             val(i + 1, loader_val, model, loss_fn,
                 history, args, logger)
-    gc.collect()
-    if args.local_rank == 0:
-        gc.collect()
         checkpoint(model, history, cfg, i + 1, args, logger)
 
 
@@ -407,17 +404,6 @@ def train(epoch, loader_train, loader_mixup, model, loss_fn, optimizer, history,
                 pred[~mask.unsqueeze(1).expand_as(pred).bool()] = -INF_FP16
                 # import ipdb; ipdb.set_trace()
                 sum_loss, losses = loss_fn(pred, label)
-
-#         if cfg.MODEL.fp16:
-#             scaler.scale(loss).backward()
-#             with autocast():
-#                 loss
-#             with amp.scale_loss(sum_loss, optimizer) as scaled_loss:
-#                 scaled_loss.backward()
-#         else:
-#             sum_loss.backward()
-        
-#         optimizer.step()
         scaler.scale(sum_loss).backward()
         scaler.step(optimizer)
         scaler.update()
@@ -547,6 +533,11 @@ def checkpoint(model, history, cfg, epoch, args, logger):
     torch.save(
         dict_model,
         '{}/weight_epoch_{}.pth'.format(os.path.join(cfg.DIR, 'weight'), epoch))
+    
+    src = f"{os.path.join(fcg.DIR, 'weight')}/weight_epoch_{epoch}.pth"
+    dst = f"/content/gdrive/MyDrive/Weights"
+
+    shutil.copy(src, dst)
 
     plt.plot(history['train']['epoch'], history['train']['sum_loss'], color='r', label='TRN LOSS')
     # plt.plot(history['val']['epoch'], history['val']['sum_loss'], color='g', label='VAL LOSS')
