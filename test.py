@@ -44,7 +44,7 @@ def test(loader_test, model, args, logger):
         loader_test = tqdm(loader_test, total=cfg.TEST.epoch_iters)
 
     with torch.no_grad():
-        for img, mask, info in loader_test:
+        for i, img, mask, info in enumerate(loader_test):
             img = img.cuda()
             mask = mask.cuda()
 
@@ -53,6 +53,9 @@ def test(loader_test, model, args, logger):
             pred = model(img)
 
             save_result(info, pred)
+
+            if i == args.num:
+                break
 
 
 def parse_args():
@@ -75,11 +78,18 @@ def parse_args():
     )
     
     parser.add_argument(
-        "--weight"
+        "--weight",
 #         default="/content/weights/" + os.listdir("/content/weights")[0],
         default="",
         help="path to weights file",
         type=str
+    )
+
+    parser.add_argument(
+        "--num",
+        default=-1,
+        help="number of images tested"
+        type=int
     )
 
     args = parser.parse_args()
