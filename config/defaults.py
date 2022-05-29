@@ -92,7 +92,7 @@ _C.TRAIN.deep_sup_scale = 0.4
 # fix bn params, only under finetuning
 _C.TRAIN.fix_bn = False
 # number of data loading workers
-_C.TRAIN.workers = 2
+_C.TRAIN.workers = 16
 
 # frequency to display
 _C.TRAIN.disp_iter = 20

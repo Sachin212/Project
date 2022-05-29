@@ -534,7 +534,7 @@ def checkpoint(model, history, cfg, epoch, args, logger):
         dict_model,
         '{}/weight_epoch_{}.pth'.format(os.path.join(cfg.DIR, 'weight'), epoch))
     
-    src = f"{os.path.join(fcg.DIR, 'weight')}/weight_epoch_{epoch}.pth"
+    src = f"{os.path.join(cfg.DIR, 'weight')}/weight_epoch_{epoch}.pth"
     dst = f"/content/gdrive/MyDrive/Weights"
 
     shutil.copy(src, dst)
