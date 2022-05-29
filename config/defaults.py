@@ -99,8 +99,9 @@ _C.TRAIN.workers = 16
 _C.TRAIN.disp_iter = 20
 # manual seed
 _C.TRAIN.seed = 304
+path = os.listdir("/content/weights")
 
-_C.TRAIN.resume_checkpoint = '/content/weights/weight_epoch_5.pth'
+_C.TRAIN.resume_checkpoint = path[-1]
 _C.TRAIN.mixup_alpha = 0.0
 _C.TRAIN.shuffle_R_and_N = 0.0
 
@@ -125,7 +126,6 @@ _C.TEST = CN()
 # currently only supports 1
 _C.TEST.batch_size_per_gpu = 1
 # the checkpoint to test on
-path = os.listdir("/content/weights")
 _C.TEST.checkpoint = path[-1]
 # folder to output visualization results
 _C.TEST.result = "./"

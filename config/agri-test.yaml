@@ -13,7 +13,6 @@ MODEL:
 
 TEST:
   batch_size_per_gpu: 16
-  checkpoint: "/content/weights/weights_epoch_5.pth"
   result: "/content/result"
 
 DIR: "ckpt/"
