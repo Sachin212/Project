@@ -44,7 +44,7 @@ def test(loader_test, model, args, logger):
         loader_test = tqdm(loader_test, total=cfg.TEST.epoch_iters)
 
     with torch.no_grad():
-        for i, img, mask, info in enumerate(loader_test):
+        for i, (img, mask, info) in enumerate(loader_test):
             img = img.cuda()
             mask = mask.cuda()
 
@@ -88,7 +88,7 @@ def parse_args():
     parser.add_argument(
         "--num",
         default=-1,
-        help="number of images tested"
+        help="number of images tested",
         type=int
     )
 
@@ -138,13 +138,6 @@ def main():
     logger.info("Running with config:\n{}".format(cfg))
 
 
-#     if cfg.MODEL.arch == 'deeplab':
-#         model = DeepLab(num_classes=cfg.DATASET.num_class,
-#                         backbone=cfg.MODEL.backbone,                  # resnet101
-#                         output_stride=cfg.MODEL.os,
-#                         ibn_mode=cfg.MODEL.ibn_mode,
-#                         freeze_bn=False,
-#                         num_low_level_feat=cfg.MODEL.num_low_level_feat)
     if cfg.MODEL.arch == 'deeplab':
         model = DeepLab(num_classes=cfg.DATASET.num_class,
                         backbone=cfg.MODEL.backbone,                  # resnet101
