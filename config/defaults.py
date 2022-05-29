@@ -1,4 +1,5 @@
 from yacs.config import CfgNode as CN
+import os
 
 # -----------------------------------------------------------------------------
 # Config definition
@@ -124,6 +125,7 @@ _C.TEST = CN()
 # currently only supports 1
 _C.TEST.batch_size_per_gpu = 1
 # the checkpoint to test on
-_C.TEST.checkpoint = "/content/weights/weight_epoch_5.pth"
+path = os.listdir("/content/weights")
+_C.TEST.checkpoint = path[-1]
 # folder to output visualization results
 _C.TEST.result = "./"
