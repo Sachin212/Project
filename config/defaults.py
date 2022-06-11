@@ -114,8 +114,8 @@ _C.VAL = CN()
 _C.VAL.batch_size_per_gpu = 2
 # output visualization during validation
 _C.VAL.visualize = False
-_C.VAL.visualized_label = ""
-_C.VAL.visualized_pred = ""
+_C.VAL.visualized_label = "/content/label"
+_C.VAL.visualized_pred = "/content/image"
 # the checkpoint to evaluate on
 _C.VAL.checkpoint = path + "/" + weights[-1]
 # _C.VAL.epoch_iters = -1
