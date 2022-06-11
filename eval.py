@@ -24,8 +24,8 @@ from dataset import AgriValDataset
 from model.deeplab import DeepLab
 from model.loss import ComposedLossWithLogits
 
-from pydensecrf.utils import unary_from_softmax
-import pydensecrf.densecrf as dcrf
+# from pydensecrf.utils import unary_from_softmax
+# import pydensecrf.densecrf as dcrf
 
 torch.manual_seed(42)
 
