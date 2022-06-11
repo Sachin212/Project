@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-import apex
-from apex import amp
-from apex.parallel import DistributedDataParallel as DDP
+# import apex
+# from apex import amp
+# from apex.parallel import DistributedDataParallel as DDP
 from torchvision.transforms import ToPILImage
 
 import segmentation_models_pytorch as smp
@@ -111,10 +111,10 @@ def main():
     if cfg.DATASET.val_channels[0] == 'rgbn':
         convert_model(model, 4)
 
-    model = apex.parallel.convert_syncbn_model(model)
+    # model = apex.parallel.convert_syncbn_model(model)
     model = model.cuda()
 
-    model = amp.initialize(model, opt_level="O1")
+    # model = amp.initialize(model, opt_level="O1")
 
     if args.distributed:
         model = DDP(model, delay_allreduce=True)
@@ -127,8 +127,8 @@ def main():
         weight = torch.load(cfg.VAL.checkpoint,
                             map_location=lambda storage, loc: storage.cuda(args.local_rank))
 
-        if not args.distributed:
-            weight = {k[7:]: v for k, v in weight.items()}
+        # if not args.distributed:
+        #     weight = {k[7:]: v for k, v in weight.items()}
 
         model.load_state_dict(weight)
 
